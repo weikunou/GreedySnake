@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 贪吃蛇
@@ -17,6 +18,26 @@ public class Snake : MonoBehaviour
     /// 蛇身预制体
     /// </summary>
     public GameObject bodyPrefab;
+
+    /// <summary>
+    /// 虚拟摇杆预制体
+    /// </summary>
+    public DynamicJoystick joystick;
+
+    /// <summary>
+    /// 是否使用虚拟摇杆
+    /// </summary>
+    public bool isJoystick;
+
+    /// <summary>
+    /// 设置一次
+    /// </summary>
+    public bool setOnce = false;
+
+    /// <summary>
+    /// 移动模式开关
+    /// </summary>
+    public Toggle toggle;
 
     /// <summary>
     /// 蛇头方向
@@ -60,8 +81,31 @@ public class Snake : MonoBehaviour
     void Update()
     {
         // 改变蛇头方向
-        int h = (int)Input.GetAxisRaw("Horizontal");
-        int v = (int)Input.GetAxisRaw("Vertical");
+        int h;
+        int v;
+
+        if (isJoystick)
+        {
+            if (setOnce)
+            {
+                joystick.gameObject.SetActive(true);
+                setOnce = false;
+            }
+
+            h = (int)joystick.Horizontal;
+            v = (int)joystick.Vertical;
+        }
+        else
+        {
+            if (!setOnce)
+            {
+                joystick.gameObject.SetActive(false);
+                setOnce = true;
+            }
+            
+            h = (int)Input.GetAxisRaw("Horizontal");
+            v = (int)Input.GetAxisRaw("Vertical");
+        }
 
         // 检测到按键输入
         if(h !=0 || v != 0)

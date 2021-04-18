@@ -40,8 +40,24 @@ public class GameManager : MonoBehaviour
         // 展示历史最高分
         UIManager.instance.historyScoreText.text = "历史最高分：" + PlayerPrefs.GetInt("HistoryScore");
 
-        // 根据屏幕宽高比，调整相机的视窗大小
-        Camera.main.orthographicSize = 32 / Camera.main.aspect;
+        if (Camera.main.aspect < 1.77)
+        {
+            // 根据屏幕宽高比，调整相机的视窗大小
+            Camera.main.orthographicSize = 32 / Camera.main.aspect;
+        }
+
+        if (PlayerPrefs.GetString("MoveMode", "Other").Equals("Joystick"))
+        {
+            snake.toggle.isOn = true;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     /// <summary>
@@ -105,5 +121,24 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// 设置蛇的移动模式
+    /// </summary>
+    /// <param name="mode">模式</param>
+    public void SetMoveMode(bool mode)
+    {
+        snake.isJoystick = mode;
+        snake.setOnce = mode;
+
+        if (mode)
+        {
+            PlayerPrefs.SetString("MoveMode", "Joystick");
+        }
+        else
+        {
+            PlayerPrefs.SetString("MoveMode", "Other");
+        }
     }
 }
